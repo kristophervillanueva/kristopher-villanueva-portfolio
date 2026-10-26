@@ -86,9 +86,10 @@ before publishing anything.
 
 ## Deploying
 
-See [`docs/DEPLOY.md`](docs/DEPLOY.md). Short version: import the repo into
-Vercel, optionally add Blob storage and `ADMIN_PASSWORD` for the upload page,
-deploy.
+See [`docs/DEPLOY.md`](docs/DEPLOY.md). The site is linked to the Vercel
+project **kristopher-villanueva-portfolio**. Until the Vercel account has a
+GitHub login connection, deploy after pushing with `npx vercel --prod`;
+documented in DEPLOY.md.
 
 Every push and pull request runs typecheck, build and a production dependency
 audit via GitHub Actions. Dependabot keeps dependencies current in grouped

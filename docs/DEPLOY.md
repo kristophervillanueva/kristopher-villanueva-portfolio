@@ -4,6 +4,8 @@ The site is a standard Next.js app. Vercel is the path of least resistance
 because Blob storage is a first-party add-on, but nothing here is
 Vercel-specific except `/admin`.
 
+**Production:** <https://kristopher-villanueva-portfolio.vercel.app>
+
 ## Prerequisites
 
 - Node 20.9 or newer (developed on 24).
@@ -37,8 +39,13 @@ git push -u origin main
 Then in Vercel: **Add New → Project → Import** the repository. Framework
 preset is detected as Next.js; no build settings need changing.
 
-Every push to `main` deploys to production. Every other branch gets a preview
-URL.
+Every push to `main` deploys to production once the Vercel project is connected
+to the GitHub repository. Every other branch gets a preview URL.
+
+If `npx vercel git connect` reports **"You need to add a Login Connection to
+your GitHub account first"**, add GitHub as a login connection in the Vercel
+account settings and run it again. Until that connection exists, a push updates
+GitHub but does not deploy; run `npx vercel --prod` manually after pushing.
 
 The same push also runs `.github/workflows/ci.yml`: `npm ci`, typecheck, build
 and a production-dependency audit. Dependabot opens weekly grouped dependency
