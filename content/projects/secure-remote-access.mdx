@@ -1,0 +1,193 @@
+---
+title: "Zero-Budget Secure Remote Access"
+subtitle: "Certificate, Active Directory password and TOTP for 54 workstations — built without new licensing, and without touching the regional HQ link"
+type: case-study
+category: identity
+order: 2
+featured: true
+role: IT Administrator
+timeframe: "2026"
+status: in-progress
+updated: "Oct 2026"
+summary: "Built a three-factor remote access path for an architecture practice: OpenVPN on OPNsense, FreeRADIUS and privacyIDEA for TOTP, LDAPS to a single domain controller, and UltraVNC for GPU render workstations that need a console session."
+outcome: "End-to-end pilot verified on 2026-10-12: certificate, AD password and TOTP, then RDP or VNC to an office PC. Rollout and the render-PC pilot remain open."
+stack:
+  - FortiGate 60F
+  - OPNsense
+  - OpenVPN
+  - FreeRADIUS
+  - privacyIDEA
+  - Active Directory / LDAPS
+  - UltraVNC
+  - VLANs
+metrics:
+  - value: "3"
+    label: "auth factors"
+  - value: "1"
+    label: "inbound policy"
+  - value: "54"
+    label: "workstations in scope"
+  - value: "90–100%"
+    label: "GPU load during VNC test"
+evidence:
+  - id: opnsense-vpn
+    label: "OpenVPN server and client status"
+    proves: "The tunnel comes up with tls-crypt-v2 and a client is connected, not merely configured."
+    status: on-request
+  - id: fortigate-policy
+    label: "FortiGate inbound policy"
+    proves: "One narrow inbound policy exists and sits above the broad VLAN policy, which is what decides the outcome."
+    status: on-request
+  - id: privacyidea-token
+    label: "privacyIDEA token assignment"
+    proves: "Per-user TOTP tokens are enrolled and a login resolves through RADIUS to the token service. Usernames redacted."
+    status: on-request
+  - id: vpn-client
+    label: "Client connected from outside"
+    proves: "A home connection authenticates end to end with certificate, directory password and one-time code."
+    status: on-request
+  - id: rdp-session
+    label: "RDP session to an office PC"
+    proves: "Traffic crosses the tunnel into the correct VLAN and reaches a workstation over TCP 3389."
+    status: on-request
+  - id: vnc-dual-monitor
+    label: "UltraVNC across two monitors"
+    proves: "The console session handles the lock screen, UAC prompts and a dual-monitor layout. Desktop content redacted."
+    status: on-request
+  - id: ldaps-cert
+    label: "Directory certificate over LDAPS"
+    proves: "The directory lookup uses TLS to one controller by explicit hostname, using a private CA issued for that server."
+    status: on-request
+decisions:
+  - decision: "OPNsense on bare metal as the VPN gateway"
+    alternative: "Run the OpenVPN server as a virtual machine on Hyper-V"
+    why: "The hypervisor hosts run an operating system release past mainstream support. Internet-facing VPN duty is the last thing to add to them."
+    cost: "An additional device to patch and monitor, with no high-availability pair."
+  - decision: "Split tunnel rather than full tunnel"
+    alternative: "Route all remote traffic through the office"
+    why: "Limits exposure and preserves bandwidth on a constrained WAN link. Remote staff only need the office VLANs."
+    cost: "No central egress filtering for anything else the user does remotely."
+  - decision: "Certificate plus directory password plus TOTP"
+    alternative: "Password and TOTP only"
+    why: "A stolen password and a stolen code are not enough without the per-user certificate on the device."
+    cost: "Certificate issue and renewal become an IT task, and a lost device is a support call."
+  - decision: "LDAPS to one controller by explicit hostname"
+    alternative: "Point at the domain name and let DNS decide"
+    why: "The bare domain name resolves to the regional HQ controllers. Changes there could put the IPsec link at risk."
+    cost: "That single controller is a single point of failure for remote authentication."
+  - decision: "UltraVNC with per-user directory accounts for render workstations"
+    alternative: "RDP for every user"
+    why: "Render applications want a console session, and dual-monitor behaviour mattered. Per-user accounts keep control attributable to a person."
+    cost: "The gateway-to-workstation hop is unencrypted VNC on the office LAN. Enscape under VNC was never tested."
+  - decision: "Narrow firewall policies ordered above the broad VLAN policy"
+    alternative: "Rely on the broad VLAN rule and an implicit deny"
+    why: "First match wins. Policy order is the actual control, so the narrow rules have to sit above the permissive one."
+    cost: "Ordering has to be maintained and reviewed. A confidently misnamed rule can silently invert the intent."
+notClaiming:
+  - "A production rollout. What was verified is a working pilot."
+  - "That Enscape works over VNC. It was never tested."
+  - "A measured GPU advantage for VNC over RDP. One workstation and one scene is not a benchmark."
+  - "That the full firewall policy order was audited end to end. Not every rule between the narrow policies and the VLAN policy was captured."
+  - "High availability. The MFA server is a single point of failure and there is no local fallback if it is down."
+next:
+  - "Run the render-workstation pilot on the second VLAN and test Enscape specifically."
+  - "Back up and restore-test the privacyIDEA configuration and its encryption key, then write the runbook."
+  - "Reconcile every firewall rule name against its action, so a deny is a deny."
+  - "Decide on encryption for the gateway-to-workstation VNC hop, or document the compensating controls."
+  - "Ship a firewall GPO so a local exception cannot override policy on a workstation."
+  - "Plan the migration off the unsupported server operating system, and plan the Windows 10 endpoints with it."
+  - "Add per-workstation allowlists and a written offboarding procedure for certificates and tokens."
+interview: "Staff at an architecture practice needed to work from home on their own office PCs, including GPU-heavy render machines. The constraints were no budget, MFA required, and no changes that could put the IPsec link to our regional HQ at risk. I built an OPNsense gateway running OpenVPN. Users authenticate with a personal certificate, their Active Directory password and a TOTP code. The request goes through FreeRADIUS to privacyIDEA, which validates against Active Directory over LDAPS. I pointed that at one domain controller by its explicit hostname, because the bare domain name resolves to the regional HQ controllers, and I created a private CA because that controller had no certificate. On the FortiGate there is one inbound policy, with narrow rules ordered above the broad VLAN policy because first match wins. For render users I piloted UltraVNC as a service with per-user directory logins. The hardest fault was RDP being blocked while packets were arriving; the cause was an unassigned tunnel interface. The end-to-end pilot worked, including dual monitors and a heavy D5 scene at 90 to 100 percent GPU. The render pilot, Enscape testing and the rollout are still open."
+diagram: remote-access
+---
+
+## The problem
+
+Staff needed to work from home on **their own office PCs**, not on a generic remote desktop. That matters for the render workstations: applications like D5, Enscape, SketchUp, ArchiCAD and Revit depend on the GPU in the physical machine.
+
+The requirements were unusually tight for a remote access project:
+
+- **No budget.** No new per-seat licensing.
+- **MFA required.** Password alone was not acceptable.
+- **Protect the regional HQ link.** The site connects to the regional HQ over IPsec, with directory synchronisation involved. Anything that touched the wrong controller could put that link at risk.
+- **Keep it usable.** People needed their files, their licenses and their desktop exactly as they left them.
+
+## Constraints
+
+- The environment runs an ageing Windows Server generation on the hypervisors. Adding an internet-facing VPN role to those hosts was not defensible.
+- The FortiGate already terminates the HQ tunnel and its own management services. Only one inbound path could be opened, and it had to be narrow.
+- The directory had controllers in more than one region. The safest target was a single, local controller addressed explicitly.
+- Unverified assumptions were common at the start. The project needed a habit of testing each link in the chain separately.
+
+## Architecture
+
+<Diagram />
+
+The path has two distinct halves, and separating them made the troubleshooting tractable.
+
+**Authentication:** the client presents a certificate, an Active Directory password and a TOTP code. The OpenVPN server hands the credentials to FreeRADIUS, which asks privacyIDEA to validate the one-time code, and privacyIDEA checks the password against Active Directory over LDAPS. Only when all of that succeeds does the tunnel carry traffic.
+
+**Session:** the tunnel routes only the office VLANs. From there a user reaches their own workstation with RDP, or UltraVNC for render machines that need a console session and dual monitors.
+
+Two details carried most of the risk:
+
+1. **The explicit hostname.** Pointing LDAPS at the bare domain name would have resolved to the regional HQ controllers. The configuration named one local controller directly, so directory changes stayed local.
+2. **The private CA.** That controller had no certificate of its own. I created a private CA with OpenSSL, issued a certificate for that server, and imported it — a two-hour task that unblocked the entire identity chain.
+
+## The identity chain
+
+The three factors are not decorative. Each covers a different failure:
+
+- The **certificate** is bound to the device. A password typed somewhere else is useless without it.
+- The **directory password** ties access to a real, disableable account.
+- The **TOTP code** covers the case where the password is known and the device is not.
+
+The password and the six-digit code are entered together, which keeps the client experience to one prompt. Behind it, FreeRADIUS and privacyIDEA do the separation.
+
+## Decisions and trade-offs
+
+<Decisions />
+
+## Hardest faults
+
+These were the failures that took the longest, and each one changed how I troubleshoot.
+
+### RDP blocked although packets arrived
+
+Everything looked correct and traffic reached the gateway, but nothing came back. The cause was an OPNsense tunnel interface that had been assigned but never enabled — a single unchecked box. The lesson: verify the interface state, not just the firewall rule that references it.
+
+### The same symptom on a workstation
+
+A workstation showed an identical "connection refused" pattern. The firewall exception was correct. Windows Firewall's **"Block all incoming connections"** setting overrides every individual exception, including the one just created.
+
+### An orphaned instance in the VPN service
+
+A DCO error kept the service from starting cleanly. The cause was an orphaned instance identifier. Disabling DCO hid the symptom; clearing the stale instance fixed it.
+
+### A firewall policy that did not match its interface
+
+Traffic matched the wrong policy because the destination interface referenced raw ports instead of the VLAN interfaces. Fortinet TAC and `diagnose debug flow` together showed the real match path. Reading the flow trace was faster than reasoning about intent.
+
+### LDAPS resetting the connection
+
+A "connection reset" during the directory binding was most likely caused by StartTLS being enabled while using an `ldaps://` URI — asking for TLS twice. Several settings changed at once during that window, so this is a likely cause rather than an isolated proof.
+
+### A rule named "deny" that accepted
+
+One firewall rule was named as a deny for RDP and VNC, and its action was accept. Nothing in the name, the description, or the surrounding documentation said so. I found it by opening the live form and reading the action field. The lesson is now a habit: **read the action, not the label.**
+
+## Evidence
+
+<Evidence />
+
+## What I am not claiming
+
+<NotClaiming />
+
+## What I would do next
+
+<Next />
+
+## Interview version
+
+<Interview />

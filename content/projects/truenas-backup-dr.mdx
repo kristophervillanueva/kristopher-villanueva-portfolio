@@ -1,0 +1,147 @@
+---
+title: "Centralised Backup & Disaster Recovery"
+subtitle: "Veeam and TrueNAS for a Hyper-V estate, with replication to a second system and restore testing that was actually run"
+type: case-study
+category: backup
+order: 1
+featured: true
+role: IT Administrator
+timeframe: "Ongoing"
+status: operational
+updated: "Oct 2026"
+summary: "Separated backup storage from production: Veeam protects the virtual machines, Windows Server Backup protects the physical host, TrueNAS with RAID-Z2 holds the data, and selected datasets replicate to a second NAS."
+outcome: "File-level and virtual-machine restores tested and verified, with an additional copy of selected backup datasets on separate hardware."
+stack:
+  - Veeam Backup & Replication
+  - TrueNAS / OpenZFS
+  - RAID-Z2
+  - Windows Server Backup
+  - Hyper-V
+  - ZFS replication
+metrics:
+  - value: "≈ 21.7 TiB"
+    label: "pool capacity"
+  - value: "6 × 6 TB"
+    label: "RAID-Z2 vdev"
+  - value: "4 h"
+    label: "backup interval"
+  - value: "14"
+    label: "restore points"
+evidence:
+  - id: veeam-jobs
+    label: "Veeam job history"
+    proves: "Scheduled virtual-machine backups are running and completing, not just configured."
+    status: on-request
+  - id: veeam-restore
+    label: "Completed VM restore"
+    proves: "A virtual machine was restored from a recovery point and started. A green backup job is a different claim."
+    status: on-request
+  - id: truenas-pool
+    label: "ZFS pool and disk health"
+    proves: "All six disks are present, the RAID-Z2 vdev is online, and the pool is not degraded."
+    status: on-request
+  - id: truenas-replication
+    label: "Replication task status"
+    proves: "Selected datasets are being copied to the secondary system and the last run succeeded."
+    status: on-request
+  - id: wsb-image
+    label: "Windows Server Backup image"
+    proves: "The physical host has its own bare-metal recovery path that does not depend on a running hypervisor."
+    status: on-request
+  - id: truenas-capacity
+    label: "Dataset capacity and retention"
+    proves: "Free space and the number of retained restore points are within the configured limits."
+    status: on-request
+decisions:
+  - decision: "Backup storage separated from production storage"
+    alternative: "Back up to disks inside the Hyper-V host"
+    why: "A host or volume failure would otherwise take the workloads and their backups at the same time."
+    cost: "One more system to patch, monitor and power, with its own failure modes."
+  - decision: "Veeam for virtual machines, Windows Server Backup for the host"
+    alternative: "One product for everything"
+    why: "Veeam protects the guests; the physical host still needs a bare-metal image path that does not rely on a running hypervisor."
+    cost: "Two backup chains, two retention policies, and two things to verify."
+  - decision: "RAID-Z2 across six disks"
+    alternative: "RAID-Z1 or a mirrored pair"
+    why: "Tolerates two disk failures inside the same vdev while still giving usable capacity from 6 TB drives."
+    cost: "Slower rebuilds and lower write performance than mirrors. Redundancy is not a backup."
+  - decision: "Replicate selected datasets, not the entire pool"
+    alternative: "Replicate everything to the secondary system"
+    why: "Keeps the second copy focused on the data that matters and within the available capacity."
+    cost: "Anything outside those datasets still has only one copy."
+  - decision: "Keep the Veeam repository on the primary system"
+    alternative: "Point Veeam directly at the secondary system"
+    why: "Normal restores stay on the fast local path; the secondary exists for when the primary is unavailable."
+    cost: "A failover needs repository reconfiguration and backup-chain validation. It is not plug-and-play."
+notClaiming:
+  - "Full site disaster recovery. Replicated datasets exist on separate hardware, but a site-loss scenario has not been exercised end to end."
+  - "A measured RTO or RPO. Both remain planning targets until timed, business-approved tests exist."
+  - "Ransomware immunity. Replication faithfully copies whatever the source contains, including deleted or encrypted data."
+  - "That the secondary system can be used by Veeam without reconfiguring the repository and validating the chain."
+next:
+  - "Record timed restore tests: start, end, age of the recovery point, and the validation steps performed."
+  - "Agree RTO and RPO targets per workload with the business, then test against those numbers."
+  - "Add an offline or immutable copy so a compromised primary cannot propagate to every replica."
+  - "Document the exact dataset-to-job mapping and the reconfiguration steps for a primary-storage failure."
+  - "Test the physical host image recovery on spare hardware rather than assuming it boots."
+interview: "One of my infrastructure projects was a centralised backup and disaster recovery solution built around TrueNAS and Veeam. The environment runs virtual machines on Hyper-V, and the goal was to improve protection and recovery options for both the virtual machines and the physical host. Veeam manages the VM backups, while Windows Server Backup provides a system-image path for the host itself. TrueNAS provides the storage using ZFS with RAID-Z2 redundancy, and selected datasets replicate to a second TrueNAS system on separate hardware. I documented the procedures and tested both file-level and virtual-machine recovery, so those paths are verified in practice. I would not claim a measured RTO or RPO yet, because that needs timed tests and business-approved targets. What the project gave me was practical depth in backup operations, storage, replication and recovery planning — and a habit of separating what I have tested from what I have only designed."
+diagram: backup-flow
+---
+
+## The problem
+
+Virtualisation consolidates several workloads onto one physical host. That is efficient, but it also concentrates risk: a host, storage, or software failure can take out multiple services at once. In the same way, backup data that lives on the same disks as the workloads is not really a backup — it shares the failure.
+
+The environment had working virtual machines and a backup product in place. What it lacked was separation. Backup storage, production storage and the recovery procedure were not clearly distinct, and recovery had not been demonstrated.
+
+## Constraints
+
+- **No new licensing budget.** The solution had to work with Veeam Community Edition and tooling already owned.
+- **The virtualisation layer could not be rebuilt.** The backup design had to fit the host as it existed.
+- **Backup data could not sit on production disks.** A host failure must not destroy the recovery points with it.
+- **The procedure had to be usable by one person.** A recovery plan that needs a specialist vendor on the phone is not a recovery plan.
+- **Anything unverified had to be labelled.** A green job status is not evidence that a restore works.
+
+## Architecture
+
+<Diagram />
+
+Three things are deliberately separate. The **production tier** is the Hyper-V hosts and their guests. The **backup tier** is Veeam plus the primary TrueNAS system. The **second copy** is the secondary TrueNAS system on separate hardware.
+
+Veeam writes virtual-machine recovery points to the primary system on a four-hour interval, retaining fourteen restore points in the documented configuration. Windows Server Backup captures a system image of the physical host, so the hypervisor itself has a recovery path that does not depend on the hypervisor running. Selected datasets then replicate to the secondary system.
+
+An important limit, and one worth stating plainly: **replication is not a hot standby for the Veeam repository.** Using the replicated data means reconfiguring the repository and validating the backup chain. Treating the secondary system as a drop-in replacement would be an assumption, not a design.
+
+## Decisions and trade-offs
+
+<Decisions />
+
+## What the tests actually proved
+
+<Callout title="File-level restore — tested">
+A file was recovered from an available restore point and its contents and permissions were checked. The path works. The elapsed time and the age of the recovered point were not recorded at the time, so no RTO or RPO figure is claimed from it.
+</Callout>
+
+<Callout title="Virtual-machine restore — tested">
+A virtual machine was restored from a successful recovery point and started. Operating system, networking and the services checked at the time came up. Any manual steps taken during the restore were noted as part of the procedure.
+</Callout>
+
+Two restores working is a meaningful result: it proves the backup chain is usable and the procedure is followable. It is not the same as a measured recovery capability. Without timings, a business-approved target and a repeatable test record, an RTO number would be an estimate dressed up as evidence.
+
+## Evidence
+
+<Evidence />
+
+Screenshots are redacted before publication, which is why they are offered on request rather than embedded. The ledger above records what each image would prove.
+
+## What I am not claiming
+
+<NotClaiming />
+
+## What I would do next
+
+<Next />
+
+## Interview version
+
+<Interview />

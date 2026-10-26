@@ -1,0 +1,240 @@
+---
+title: "VLAN Segmentation Across FortiGate and Managed Switches"
+subtitle: "Four purpose-specific segments, one routing and policy point, and an addressing plan that survives the next desk move"
+type: case-study
+category: networking
+order: 3
+featured: false
+role: IT Administrator
+timeframe: "Completed"
+status: operational
+updated: "Oct 2026"
+summary: "Replaced a flat office network with four purpose-specific VLANs on D-Link managed switches, routed and filtered by a FortiGate 60F, with a consistent subnet and gateway convention for every segment."
+outcome: "Shared resources, administration, production and IT infrastructure now sit in separate broadcast domains. Inter-VLAN traffic passes through the firewall, where policy decides what is allowed instead of Layer 2 proximity."
+stack:
+  - FortiGate 60F
+  - D-Link DGS-1210 / DGS-1250
+  - IEEE 802.1Q
+  - IPv4 subnetting
+  - Inter-VLAN routing
+  - Firewall policy
+  - DHCP
+metrics:
+  - value: "4"
+    label: "VLAN roles"
+  - value: "/24"
+    label: "per segment"
+  - value: ".254"
+    label: "gateway convention"
+  - value: "1"
+    label: "routing and policy point"
+evidence:
+  - id: switch-vlans
+    label: "VLAN membership on the switches"
+    proves: "VLANs 102, 103, 104 and 105 exist on the relevant switches with the intended names and IDs."
+    status: on-request
+  - id: pvid-ports
+    label: "Access ports and PVIDs"
+    proves: "Endpoint ports carry the intended untagged VLAN rather than inheriting a default."
+    status: on-request
+  - id: tagged-uplinks
+    label: "Tagged uplinks"
+    proves: "The required VLANs are allowed across the switch-to-switch and switch-to-firewall uplinks."
+    status: on-request
+  - id: fortigate-interfaces
+    label: "FortiGate VLAN interfaces"
+    proves: "Each VLAN has a gateway interface and the addressing matches the documented plan."
+    status: on-request
+  - id: firewall-policy
+    label: "Inter-VLAN firewall policy"
+    proves: "Routed access is expressed as explicit source, destination and service rules rather than a single broad permit."
+    status: on-request
+  - id: endpoint-config
+    label: "Endpoint addressing"
+    proves: "A migrated device receives the correct address, mask, gateway and DNS settings for its VLAN."
+    status: on-request
+  - id: connectivity-test
+    label: "Required paths tested"
+    proves: "Same-VLAN connectivity, the required cross-VLAN services and internet access work after the change."
+    status: on-request
+  - id: denied-path
+    label: "Denied path checked"
+    proves: "A path that should not be permitted is blocked. ICMP alone is not used as the proof."
+    status: not-claimed
+decisions:
+  - decision: "Segment by function rather than by floor"
+    alternative: "Give each floor or physical zone its own VLAN"
+    why: "Functional boundaries still make sense after a desk move. Physical boundaries have to be redrawn every time the layout changes."
+    cost: "More segments and more policy than a simple floor-by-floor split, plus a port map that has to stay current."
+  - decision: "Layer 2 on the switches, Layer 3 on the FortiGate"
+    alternative: "Route between VLANs on the switch stack"
+    why: "The firewall is already the policy enforcement point. Keeping routing there means one place to review, log and change cross-segment access."
+    cost: "Inter-VLAN traffic depends on the firewall and its uplink. The firewall becomes a capacity and availability consideration, not just an edge device."
+  - decision: "One /24 per VLAN with the gateway at .254"
+    alternative: "Variable subnet sizes chosen per segment"
+    why: "A predictable convention makes the addressing plan easy to read, document and extend. The last usable address stays clear of the DHCP pool."
+    cost: "Some segments use less address space than a /24 provides. The convention is worth more than the saved addresses at this scale."
+  - decision: "Least-privilege inter-VLAN policy"
+    alternative: "Permit all routed traffic and rely on the VLAN boundary alone"
+    why: "A VLAN creates a broadcast domain; it does not block routed traffic by itself. Access has to be written as policy."
+    cost: "Every legitimate cross-segment service needs a rule, and those rules need review as services move."
+  - decision: "Keep IT management in its own segment with restricted sources"
+    alternative: "Leave switch and hypervisor management reachable from every user VLAN"
+    why: "Management interfaces are high-value targets. Restricting the source networks reduces the blast radius of a compromised workstation."
+    cost: "Administration depends on the right jump path being available. A rollback and console fallback have to be planned before the change."
+notClaiming:
+  - "A measured security or performance improvement. No before-and-after baseline was recorded, so no percentage is claimed."
+  - "A complete switch port map or a full firewall policy export. Those remain in the internal as-built documentation."
+  - "That every possible cross-VLAN path was exhaustively tested. Validation covered the paths recorded in the change notes."
+  - "That a successful ping proves an application works. Reachability and service availability are separate checks."
+  - "Redundancy at the firewall or switch layer. This design does not add a high-availability pair."
+next:
+  - "Publish a sanitised port map and firewall policy summary alongside this page, so the design can be reviewed without exposing the live configuration."
+  - "Record protocol-level tests for each permitted service and each denied path, with the date and the source segment."
+  - "Write the rollback procedure for losing switch management access during a VLAN or PVID change."
+  - "Review the inter-VLAN policy on a schedule and reconcile every rule name against its action."
+  - "Test the gateway path during a firewall failover or maintenance window rather than assuming it is transparent."
+interview: "One of the network projects I completed at an architecture practice was VLAN segmentation. The office was effectively one flat network, so render workstations, general admin machines and infrastructure management all shared a broadcast domain and a broad firewall rule. I split it into four purpose-specific VLANs: shared resources, administration, production, and IT and core infrastructure. The D-Link managed switches handle Layer 2 membership, port PVIDs and tagged uplinks, while the FortiGate 60F provides the gateway interfaces, inter-VLAN routing and firewall policy. Each segment has its own /24 and a consistent gateway at .254. The important part is that a VLAN on its own does not block anything routed, so access between segments is written as least-privilege policy. I staged the migration, validating one group of devices at a time, and documented the addressing and port assignment so the next change does not invent a new scheme. The thing I am careful not to claim is a measured improvement: there was no baseline, so I report the design and the checks, not a percentage."
+---
+
+## Executive summary
+
+The office network was effectively one flat segment. Shared services, administration, production machines and the devices that manage the infrastructure all sat in the same broadcast domain, behind the same broad firewall rule.
+
+I introduced four purpose-specific VLANs and moved inter-VLAN traffic onto the FortiGate, where policy decides what is allowed. The managed switches handle Layer 2 membership, port assignment and tagged uplinks. The firewall handles the gateway interfaces, routing and access control.
+
+The result is a network where a device's role determines its segment, a cross-segment connection is an explicit policy decision, and troubleshooting starts with a much narrower scope.
+
+## Business context
+
+Office users and shared services depend on reliable connectivity. When unrelated devices share one logical network, three things become harder:
+
+- **Policy.** A single broad rule has to cover every device, so it permits far more than any one group needs.
+- **Troubleshooting.** Broadcast traffic and faults are shared across the whole office, which makes the scope of a problem larger than it should be.
+- **Management exposure.** Infrastructure management interfaces sit within reach of ordinary user devices.
+
+VLANs solve the Layer 2 part by creating separate broadcast domains. They do not, on their own, stop traffic from being routed between those domains. That is why the design pairs segmentation with firewall policy and treats the two as one control, not two unrelated tasks.
+
+## Logical design
+
+Four VLAN roles were defined, each with its own subnet and a consistent gateway convention.
+
+| VLAN | Purpose | Addressing | Gateway |
+| --- | --- | --- | --- |
+| 102 | Shared resources | Dedicated `/24` | `.254` |
+| 103 | Administration | Dedicated `/24` | `.254` |
+| 104 | Production | Dedicated `/24` | `.254` |
+| 105 | IT / core infrastructure | Dedicated `/24` | `.254` |
+
+Exact subnet values and interface addresses are deliberately omitted here. They are recorded in the internal as-built documentation, where they belong.
+
+**Component responsibilities:**
+
+- **Managed switches** create the VLANs, assign endpoint ports, set PVIDs and carry the required VLANs across tagged uplinks.
+- **FortiGate 60F** provides the VLAN gateway interfaces, routes between subnets and enforces firewall policy.
+- **Endpoints** receive the address, mask, gateway and DNS settings for their assigned segment.
+- **Documentation** holds the VLAN IDs, subnet and gateway values, port assignments, policy intent and test evidence.
+
+## Implementation approach
+
+1. **Plan the segmentation.** Defined the four roles and the addressing convention before touching a switch. The boundary had to make sense by function, not by where a desk happened to be.
+2. **Configure Layer 2.** Created the VLANs on the managed switches, assigned access ports and PVIDs, and allowed the required VLANs across the tagged uplinks.
+3. **Configure Layer 3.** Created the VLAN gateway interfaces on the FortiGate and used it as the routing point for every segment.
+4. **Apply policy.** Wrote inter-VLAN rules around the services that actually needed to cross a boundary, with a default posture that denies what was not required.
+5. **Validate in stages.** Checked addressing, gateway reachability, required services and cross-VLAN paths after each group of devices moved, rather than after the whole cutover.
+6. **Document the result.** Recorded purposes, addressing, platform roles and policy intent so the next change starts from a written baseline.
+
+Staging the migration was slower than renumbering everything in one window. It was also far easier to unwind, which matters more when the change affects the network you are using to administer it.
+
+## Business use cases
+
+### Department separation
+
+Administration and production sit in separate broadcast domains. That gives each group a narrower fault domain and a policy boundary that can be described in one sentence.
+
+### IT management protection
+
+Switch and hypervisor management interfaces live in the infrastructure segment. Access to them is restricted to authorised source networks instead of being reachable from every user VLAN.
+
+### Shared service access
+
+User groups can reach designated shared resources without being granted broad access to everything in another segment. The rule describes the service, not the whole subnet.
+
+### Centralised policy enforcement
+
+Inter-VLAN traffic traverses the FortiGate. That gives one place to review, log and change routed access, instead of hunting through switch ACLs and firewall rules that overlap.
+
+### Future expansion
+
+A new device has an obvious home. Its role determines the VLAN and subnet, and the port assignment follows the documented convention rather than an improvised one.
+
+## Security and operational considerations
+
+- **A VLAN is not a firewall.** Segmentation creates broadcast domains. Inter-VLAN access still has to be denied or permitted explicitly.
+- **Least privilege applies inside the LAN too.** Permit the required source, destination and service; deny the rest. A flat "trusted internal network" assumption undoes most of the benefit.
+- **Management needs its own path.** Restricting management access is only useful if administrators still have a reliable way in, including a console fallback.
+- **Change the management plane carefully.** Switch management VLANs, PVIDs, uplinks and management addresses can lock you out. Capture the current state and keep a rollback path.
+- **Test the protocol, not just the host.** ICMP reachability does not prove an application is available. Check the actual TCP port the service uses.
+- **Policy order matters.** In first-match systems, the position of a rule is part of its meaning. A confidently named rule can still do the opposite of its label.
+
+## Verification
+
+Validation covered the checks below. The exact results are kept with the change record rather than reproduced as screenshots here.
+
+- VLANs 102, 103, 104 and 105 exist on the relevant switches.
+- Access ports and PVIDs match the intended assignment.
+- Required tagged VLANs are allowed across the uplinks.
+- FortiGate VLAN interfaces and gateway addresses match the as-built plan.
+- Migrated endpoints receive the correct address, mask, gateway and DNS settings.
+- Same-VLAN connectivity works.
+- Required inter-VLAN applications and ports are reachable.
+- Internet, DNS and essential business services remain functional.
+- Configuration backups and rollback notes exist.
+
+The checks that still need a written, dated record are the denied-path tests and a full port-map reconciliation. They are listed in **What I would do next** rather than presented as completed evidence.
+
+### Example Windows checks
+
+```powershell
+ipconfig /all
+ping <vlan-default-gateway>
+tracert <destination-ip>
+Test-NetConnection <destination-ip> -Port <required-tcp-port>
+arp -a
+```
+
+`ipconfig /all` verifies addressing and DNS. `ping` checks reachability, subject to ICMP filtering. `tracert` shows the path, though intermediate devices may not respond. `Test-NetConnection` checks the TCP port the application actually uses. `arp -a` shows the local cache.
+
+A failed ping can mean ICMP is filtered, not that the path is broken. That is why the application-level check is the one that counts.
+
+## Outcomes
+
+The office now has four purpose-specific segments instead of one flat network. Each has a documented role, a consistent addressing convention and a place in the firewall policy. Management interfaces are separated from ordinary user traffic, and a new device has a defined home.
+
+What the project gives me is not a headline number. It is a network that can be explained, changed and troubleshoot one segment at a time.
+
+## Decisions and trade-offs
+
+<Decisions />
+
+## Evidence
+
+<Evidence />
+
+## What I am not claiming
+
+<NotClaiming />
+
+## What I would do next
+
+<Next />
+
+## Interview version
+
+<Interview />
+
+## Scope and accuracy
+
+This page is a project summary, not a substitute for the as-built configuration. It omits credentials, exact subnet values, firewall policy identifiers and the full switch port map.
+
+Environment details are generalised. The design, the platform roles and the checks described are the ones from the project; anything not verified is labelled as such.
