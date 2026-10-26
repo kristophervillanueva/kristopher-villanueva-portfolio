@@ -7,6 +7,8 @@ was run, and — separately — what it does not prove.
 
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · MDX content · Vercel.
 
+**Live:** <https://kristopher-villanueva-portfolio.vercel.app>
+
 ## Run it
 
 ```bash
