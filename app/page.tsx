@@ -1,18 +1,15 @@
 import Link from "next/link";
 import { Hero } from "@/components/hero";
 import { Section, SectionHeading } from "@/components/section";
-import { BriefCard, CaseStudyCard } from "@/components/project-card";
+import { CaseStudyCard } from "@/components/project-card";
 import { SkillMatrix } from "@/components/skill-matrix";
 import { Contact } from "@/components/contact";
 import { ArrowRight } from "@/components/icons";
-import { getFeaturedProjects, getAllProjects } from "@/lib/projects";
+import { getFeaturedProjects } from "@/lib/projects";
 import { site } from "@/lib/site";
 
 export default function HomePage() {
-  const featured = getFeaturedProjects();
-  const others = getAllProjects().filter(
-    (project) => !featured.some((item) => item.slug === project.slug),
-  );
+  const projects = getFeaturedProjects();
 
   return (
     <>
@@ -21,7 +18,7 @@ export default function HomePage() {
       <Section id="work">
         <SectionHeading
           eyebrow="Selected work"
-          title="Two projects where the decisions mattered more than the products"
+          title="Four projects where the decisions mattered more than the products"
           description="Each one is written as an engineering record: the constraint, the trade-off, the test that was actually run, and the claims I deliberately do not make."
           action={
             <Link
@@ -35,7 +32,7 @@ export default function HomePage() {
         />
 
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          {featured.map((project, index) => (
+          {projects.map((project, index) => (
             <CaseStudyCard
               key={project.slug}
               project={project}
@@ -43,20 +40,6 @@ export default function HomePage() {
             />
           ))}
         </div>
-
-        {others.length > 0 && (
-          <div className="mt-14">
-            <div className="flex items-center gap-4">
-              <p className="eyebrow shrink-0">Also delivered</p>
-              <span className="hairline" aria-hidden />
-            </div>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {others.map((project) => (
-                <BriefCard key={project.slug} project={project} />
-              ))}
-            </div>
-          </div>
-        )}
       </Section>
 
       <Section id="capabilities" size="tight">

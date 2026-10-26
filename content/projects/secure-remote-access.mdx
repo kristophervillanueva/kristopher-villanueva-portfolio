@@ -27,8 +27,8 @@ metrics:
     label: "inbound policy"
   - value: "54"
     label: "workstations in scope"
-  - value: "90–100%"
-    label: "GPU load during VNC test"
+  - value: "2"
+    label: "remote session paths"
 evidence:
   - id: opnsense-vpn
     label: "OpenVPN server and client status"
@@ -97,7 +97,6 @@ next:
   - "Ship a firewall GPO so a local exception cannot override policy on a workstation."
   - "Plan the migration off the unsupported server operating system, and plan the Windows 10 endpoints with it."
   - "Add per-workstation allowlists and a written offboarding procedure for certificates and tokens."
-interview: "Staff at an architecture practice needed to work from home on their own office PCs, including GPU-heavy render machines. The constraints were no budget, MFA required, and no changes that could put the IPsec link to our regional HQ at risk. I built an OPNsense gateway running OpenVPN. Users authenticate with a personal certificate, their Active Directory password and a TOTP code. The request goes through FreeRADIUS to privacyIDEA, which validates against Active Directory over LDAPS. I pointed that at one domain controller by its explicit hostname, because the bare domain name resolves to the regional HQ controllers, and I created a private CA because that controller had no certificate. On the FortiGate there is one inbound policy, with narrow rules ordered above the broad VLAN policy because first match wins. For render users I piloted UltraVNC as a service with per-user directory logins. The hardest fault was RDP being blocked while packets were arriving; the cause was an unassigned tunnel interface. The end-to-end pilot worked, including dual monitors and a heavy D5 scene at 90 to 100 percent GPU. The render pilot, Enscape testing and the rollout are still open."
 diagram: remote-access
 ---
 
@@ -187,7 +186,3 @@ One firewall rule was named as a deny for RDP and VNC, and its action was accept
 ## What I would do next
 
 <Next />
-
-## Interview version
-
-<Interview />

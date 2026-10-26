@@ -16,7 +16,7 @@ function resolveUrl() {
 export const siteUrl = resolveUrl();
 
 export const defaultDescription =
-  "IT administrator working across infrastructure, Microsoft 365 and security operations. Windows Server, Hyper-V, Active Directory, FortiGate, TrueNAS and Veeam — documented, tested and honestly reported.";
+  "IT and system administrator working across infrastructure, Microsoft 365 and security operations. Windows Server, Hyper-V, Active Directory, FortiGate, TrueNAS and Veeam — documented, tested and honestly reported.";
 
 export function absoluteUrl(path = "/") {
   return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
@@ -26,7 +26,7 @@ export const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: site.name,
-  jobTitle: `${site.role} — ${site.specialism}`,
+  jobTitle: site.headline,
   email: `mailto:${site.email}`,
   url: siteUrl,
   address: {

@@ -1,45 +1,94 @@
 ---
 title: "Office Expansion and Network Build-Out"
-subtitle: "Delivering additional workspace connectivity — vendors, cabling, switching and handover — alongside normal operations"
-type: brief
+subtitle: "Delivering additional workspace connectivity — cabling, patching, switching and handover — alongside normal operations"
+type: case-study
 category: operations
 order: 4
-featured: false
+featured: true
 role: IT Administrator
+timeframe: "Completed"
 status: operational
-summary: "Coordinated an office expansion end to end: requirements, vendor quotations, structured cabling, switch port allocation, workspace connectivity and handover testing."
-outcome: "Additional workspace delivered with tested connectivity, documented port allocation and no disruption to the existing floor."
+updated: "Oct 2026"
+summary: "Delivered an office expansion end to end: workspace requirements, structured cabling, switch port allocation, patching, labelling and handover testing."
+outcome: "Additional workspace delivered with tested connectivity and no disruption to the existing floor."
 stack:
   - Structured cabling
   - Managed switches
   - Patch panel design
-  - Vendor coordination
+  - Cable termination
   - CAPEX planning
   - Connectivity testing
+evidence: []
+decisions:
+  - decision: "Port schedule before cable order"
+    alternative: "Order cabling from an approximate desk count"
+    why: "The port count, patch panel layout and switch capacity had to be settled before the physical build, or later changes become rework."
+    cost: "More planning time up front, and the schedule has to be maintained as the floor changes."
+  - decision: "Build the cabling in-house"
+    alternative: "Contract the cabling and containment"
+    why: "Keeping the physical build and the switch configuration with the same person meant the port scheme, labelling and patching stayed consistent, with no handover gap between trades."
+    cost: "The work had to fit around support hours, and every run and termination was completed around a live floor."
+  - decision: "Match the existing floor's conventions"
+    alternative: "Design the new floor as a separate scheme"
+    why: "A consistent port and labelling scheme makes the next move or fault a documentation lookup rather than a discovery exercise."
+    cost: "The existing scheme's limits are carried forward, including any gaps it already had."
+  - decision: "Work around the live floor"
+    alternative: "Take down the shared uplink during working hours"
+    why: "The expansion could not interrupt the people already working while it was delivered."
+    cost: "Work had to be sequenced around change windows, which lengthened the elapsed schedule."
+notClaiming:
+  - "A measured cost saving. The build was delivered in-house, but no before-and-after cost baseline is published."
+  - "Zero disruption at every moment. The existing floor stayed up during working hours; planned works still required coordination."
+  - "A port schedule or as-built drawing set. None is attached to this page."
+  - "Application performance testing at every desk. Handover checks covered connectivity."
+next:
+  - "Keep an as-built drawing with the port schedule, updated whenever a run changes."
+  - "Add a spare-port margin to future builds; expansions rarely arrive at the planned size."
+  - "Record the handover test results against the port schedule so each desk has a dated check."
 ---
 
 ## The problem
 
 The practice needed more workspace. IT's part of that is rarely the visible part: it is the cabling schedule, the port count, the switching capacity and the assurance that every desk actually works on the first morning.
 
-The constraint was the same one that shapes most of this environment — no dedicated project team. The work had to happen in parallel with day-to-day support, using external contractors where the skills genuinely sat outside the department.
+The constraint was the same one that shapes most of this environment — no dedicated project team, and no contractor for the physical work. The cabling, termination, patching, switch configuration and testing were all done in-house, alongside day-to-day support.
 
-## What I did
+## Constraints
 
-I started with a **port schedule rather than a cable order**: how many desks, where, how many devices per desk, and what the patch panel and switch would need to look like to keep changes sane later.
+- **No dedicated project team.** The expansion had to be delivered alongside normal support work, not by a separate builds team.
+- **A live floor.** The existing workspace could not be interrupted during working hours, so the build had to be sequenced around it.
+- **Everything ran through one pair of hands.** There was no contractor for the cabling or containment, so the physical build, patching, configuration and testing all had to fit around support work.
+- **The physical build had to match the network.** Port allocation, patch panel layout and labelling had to agree with the documented scheme, or the next change would start from a guess.
 
-From there I gathered vendor quotations against the same specification, compared them on scope rather than headline price, and coordinated the cabling works so the physical build matched the network design. Switch ports were allocated and labelled to the same scheme as the existing floor, and each workspace was tested before handover rather than after someone sat down at it.
+## Architecture
 
-The work was scheduled to keep the existing floor running: no shared uplink was taken down during working hours.
+The design started as a **port schedule rather than a cable order**: how many desks, where, how many devices per desk, and what the patch panel and switch would need to look like to keep changes sane later.
 
-## What changed
+That schedule set the rest of the build:
 
-- Additional workspace with tested connectivity on day one.
-- A documented port allocation that matches the physical labelling.
-- Vendor scope and cost recorded as part of the CAPEX process.
-- The same cabling and addressing conventions as the existing floor, so the next expansion starts from a plan instead of a guess.
+- **Structured cabling** from the patch panel to each workspace outlet.
+- **Patch panel and switch port allocation** sized to the desk plan, not the other way round.
+- **A labelling scheme** matching the existing floor, so a port can be traced from the panel to the desk.
+- **A written handover record** tying each workspace to the port that serves it.
+
+## Implementation approach
+
+From the port schedule I ran the structured cabling, terminated and dressed the patch panel, allocated and labelled the switch ports, configured the switching, and tested each workspace before handover. Doing the physical build and the network configuration together kept the port scheme, labelling and switch allocation consistent with the existing floor.
+
+The work was scheduled to keep the existing floor running: no shared uplink was taken down during working hours, and each run was completed around occupied desks rather than shutting the floor down.
+
+## Decisions and trade-offs
+
+<Decisions />
+
+## Evidence
+
+No photographs, test sheets or as-built drawings from the build are published. The cabling and configuration were completed in-house, and there is no build evidence attached to this page.
+
+## What I am not claiming
+
+<NotClaiming />
 
 ## What I would do next
 
-- Keep an as-built drawing with the port schedule, updated whenever a run changes.
-- Add a spare-port margin to future builds; expansions rarely arrive at the planned size.
+<Next />

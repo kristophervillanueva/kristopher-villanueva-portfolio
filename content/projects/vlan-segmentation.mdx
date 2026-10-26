@@ -4,7 +4,7 @@ subtitle: "Four purpose-specific segments, one routing and policy point, and an 
 type: case-study
 category: networking
 order: 3
-featured: false
+featured: true
 role: IT Administrator
 timeframe: "Completed"
 status: operational
@@ -94,18 +94,11 @@ next:
   - "Write the rollback procedure for losing switch management access during a VLAN or PVID change."
   - "Review the inter-VLAN policy on a schedule and reconcile every rule name against its action."
   - "Test the gateway path during a firewall failover or maintenance window rather than assuming it is transparent."
-interview: "One of the network projects I completed at an architecture practice was VLAN segmentation. The office was effectively one flat network, so render workstations, general admin machines and infrastructure management all shared a broadcast domain and a broad firewall rule. I split it into four purpose-specific VLANs: shared resources, administration, production, and IT and core infrastructure. The D-Link managed switches handle Layer 2 membership, port PVIDs and tagged uplinks, while the FortiGate 60F provides the gateway interfaces, inter-VLAN routing and firewall policy. Each segment has its own /24 and a consistent gateway at .254. The important part is that a VLAN on its own does not block anything routed, so access between segments is written as least-privilege policy. I staged the migration, validating one group of devices at a time, and documented the addressing and port assignment so the next change does not invent a new scheme. The thing I am careful not to claim is a measured improvement: there was no baseline, so I report the design and the checks, not a percentage."
 ---
 
-## Executive summary
+## The problem
 
 The office network was effectively one flat segment. Shared services, administration, production machines and the devices that manage the infrastructure all sat in the same broadcast domain, behind the same broad firewall rule.
-
-I introduced four purpose-specific VLANs and moved inter-VLAN traffic onto the FortiGate, where policy decides what is allowed. The managed switches handle Layer 2 membership, port assignment and tagged uplinks. The firewall handles the gateway interfaces, routing and access control.
-
-The result is a network where a device's role determines its segment, a cross-segment connection is an explicit policy decision, and troubleshooting starts with a much narrower scope.
-
-## Business context
 
 Office users and shared services depend on reliable connectivity. When unrelated devices share one logical network, three things become harder:
 
@@ -115,7 +108,16 @@ Office users and shared services depend on reliable connectivity. When unrelated
 
 VLANs solve the Layer 2 part by creating separate broadcast domains. They do not, on their own, stop traffic from being routed between those domains. That is why the design pairs segmentation with firewall policy and treats the two as one control, not two unrelated tasks.
 
-## Logical design
+## Constraints
+
+- **No dedicated project team.** The work had to run alongside day-to-day support in a small IT department, using existing staff and change windows.
+- **A live office.** The floor could not be taken offline in one cutover, so devices moved in staged groups with validation after each one.
+- **One routing and policy point.** The FortiGate was already the firewall and the natural place to enforce inter-VLAN access. The design had to fit its capacity and availability limits.
+- **Management access had to survive.** PVID, uplink and management-address changes can lock an administrator out, so the current state and a rollback path had to be captured before each change.
+- **No measured baseline.** No before-and-after performance or security measurement existed, so the page reports the design and the checks rather than a percentage.
+- **Publishable detail was limited.** Exact subnets, gateway addresses, policy identifiers and the full port map stay in the internal as-built documentation.
+
+## Architecture
 
 Four VLAN roles were defined, each with its own subnet and a consistent gateway convention.
 
@@ -228,13 +230,3 @@ What the project gives me is not a headline number. It is a network that can be 
 ## What I would do next
 
 <Next />
-
-## Interview version
-
-<Interview />
-
-## Scope and accuracy
-
-This page is a project summary, not a substitute for the as-built configuration. It omits credentials, exact subnet values, firewall policy identifiers and the full switch port map.
-
-Environment details are generalised. The design, the platform roles and the checks described are the ones from the project; anything not verified is labelled as such.

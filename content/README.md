@@ -21,8 +21,8 @@ build time and validates every file against `content/projects/_schema.ts`.
 ## The two project types
 
 **`case-study`** — the full template. Supports a diagram, a decision table,
-an evidence grid, a "not claiming" ledger, next steps and a spoken interview
-summary. Use it for the work you want to be interviewed about.
+an evidence grid, a "not claiming" ledger and next steps. Use it for the work
+that deserves a full engineering record.
 
 **`brief`** — a short record: problem, approach, outcome, next step. No
 evidence grid, no decision table. Use it for work that is real but not worth

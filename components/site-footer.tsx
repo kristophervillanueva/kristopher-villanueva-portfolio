@@ -15,7 +15,7 @@ export function SiteFooter() {
               {site.name}
             </p>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-2">
-              {site.role} — {site.specialism}. Background across infrastructure,
+              {site.headline}. Background across infrastructure,
               service desk and systems administration.
             </p>
             <p className="mt-4 font-mono text-2xs uppercase tracking-[0.13em] text-ink-3">

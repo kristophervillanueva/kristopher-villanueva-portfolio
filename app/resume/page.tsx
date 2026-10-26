@@ -7,7 +7,7 @@ import { ArrowLeft } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Résumé",
-  description: `Résumé for ${site.name}, ${site.role} — ${site.specialism}. Infrastructure, service desk and systems administration background.`,
+  description: `Résumé for ${site.name}, ${site.headline}. Infrastructure, service desk and systems administration background.`,
   alternates: { canonical: "/resume" },
 };
 
@@ -56,7 +56,7 @@ export default function ResumePage() {
               {site.name}
             </h1>
             <p className="mt-2.5 text-[15px] text-ink print:text-black">
-              {site.role} — {site.specialism}
+              {site.headline}
             </p>
             <p className="print-muted mt-3 font-mono text-[11.5px] leading-relaxed text-ink-3">
               {site.location} · {site.email} · {site.linkedin.replace("https://www.", "")}
@@ -70,14 +70,14 @@ export default function ResumePage() {
           <section className="mt-7 print:mt-5">
             <h2 className="eyebrow print:text-black">Profile</h2>
             <p className="mt-3 text-[14px] leading-relaxed text-ink-2 print:text-black">
-              IT administrator across infrastructure, service desk and systems
-              administration. Currently responsible for a 54-workstation
-              environment and four production VMs on two Dell Hyper-V hosts:
-              Windows Server and Hyper-V, Active Directory, Microsoft 365,
-              FortiGate and OPNsense firewalls, and a multi-layer backup and
-              recovery estate built on TrueNAS and Veeam. Works to a simple
-              standard — document the system, test the recovery, and state
-              plainly what has not been verified.
+              IT and system administrator across infrastructure, service desk
+              and systems administration. Currently responsible for a
+              54-workstation environment and four production VMs on two Dell
+              Hyper-V hosts: Windows Server and Hyper-V, Active Directory,
+              Microsoft 365, FortiGate and OPNsense firewalls, and a multi-layer
+              backup and recovery estate built on TrueNAS and Veeam. Works to a
+              simple standard — document the system, test the recovery, and
+              state plainly what has not been verified.
             </p>
           </section>
 
@@ -177,6 +177,13 @@ export default function ResumePage() {
                 </strong>{" "}
                 — designed and deployed across FortiGate firewalls and managed
                 switches.
+              </li>
+              <li>
+                <strong className="font-medium text-ink print:text-black">
+                  Office expansion and network build-out
+                </strong>{" "}
+                — requirements, structured cabling, switch configuration, switch
+                port allocation and handover testing for additional workspace.
               </li>
             </ul>
             <p className="print-muted mt-3 font-mono text-[10px] text-ink-3">

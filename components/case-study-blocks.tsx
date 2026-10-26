@@ -135,22 +135,6 @@ export function NextSteps({ items }: { items: string[] }) {
   );
 }
 
-export function InterviewBlock({ text }: { text?: string }) {
-  if (!text) return null;
-
-  return (
-    <div className="not-prose my-6 rounded-[8px] border border-line bg-panel p-5 sm:p-6">
-      <div className="flex items-center justify-between border-b border-line pb-3">
-        <span className="font-mono text-2xs uppercase tracking-[0.14em] text-ink-3">
-          spoken version · 60–90 seconds
-        </span>
-        <span className="font-mono text-2xs text-ink-3">interview prep</span>
-      </div>
-      <p className="mt-4 text-[14.5px] leading-[1.75] text-ink-2">{text}</p>
-    </div>
-  );
-}
-
 export function Callout({
   title,
   children,

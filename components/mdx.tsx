@@ -6,7 +6,6 @@ import { RemoteAccessDiagram } from "@/components/diagrams/remote-access";
 import {
   Callout,
   DecisionTable,
-  InterviewBlock,
   NextSteps,
   NotClaimingList,
 } from "@/components/case-study-blocks";
@@ -23,7 +22,6 @@ export function getMdxComponents(
     Evidence: () => <EvidenceGrid project={project} map={evidence} />,
     NotClaiming: () => <NotClaimingList items={project.notClaiming} />,
     Next: () => <NextSteps items={project.next} />,
-    Interview: () => <InterviewBlock text={project.interview} />,
     Diagram: () => {
       if (project.diagram === "backup-flow") return <BackupFlowDiagram />;
       if (project.diagram === "remote-access") return <RemoteAccessDiagram />;

@@ -1,8 +1,13 @@
+const role = "IT Administrator";
+const specialism =
+  "System Administration, Infrastructure, Microsoft 365 & Security Operations";
+
 export const site = {
   name: "Kristopher Villanueva",
   shortName: "Kristopher Villanueva",
-  role: "IT Administrator",
-  specialism: "Infrastructure, Microsoft 365 & Security Operations",
+  role,
+  specialism,
+  headline: `${role} - ${specialism}`,
   location: "Mandaluyong City, Metro Manila, Philippines",
   locationShort: "Metro Manila, PH",
   timezone: "GMT+8",
@@ -131,7 +136,7 @@ export const site = {
         "Designed and deployed VLAN segmentation across FortiGate firewalls and managed switches.",
         "Built a multi-layer backup and recovery environment using Hyper-V, TrueNAS, Veeam and Windows Server Backup.",
         "Ran restore testing and replication validation, and authored the DR and business continuity documentation.",
-        "Delivered an office expansion including vendor coordination, network layout and structured cabling.",
+        "Delivered an office expansion end to end — structured cabling, switch configuration, patching and connectivity testing.",
         "Administers Microsoft 365, asset lifecycle, software licensing and CAPEX planning.",
         "Mentors an IT Assistant Administrator and sets daily workload priorities.",
       ],
@@ -187,7 +192,17 @@ export const site = {
         "Managed enrolment, grading and departmental database systems used by administrative offices.",
         "Built database-driven reporting tools for administrative workflows.",
         "Provided day-to-day systems and access support across departments.",
-        "Also served as a part-time college instructor in Computer Science (Jun — Oct 2013).",
+      ],
+    },
+    {
+      company: "Manuel S. Enverga University Foundation — Candelaria, Inc.",
+      location: "Candelaria, Quezon",
+      role: "Part-Time College Instructor",
+      period: "Jun 2013 — Oct 2013",
+      summary:
+        "Taught Computer Science on a part-time basis alongside the IT Staff role.",
+      highlights: [
+        "Delivered Computer Science education by conducting lectures, structured discussions, and evaluating student academic performance.",
       ],
     },
   ],

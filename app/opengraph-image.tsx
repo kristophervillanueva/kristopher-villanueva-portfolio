@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/lib/site";
 
-export const alt = `${site.name} — ${site.role}, ${site.specialism}`;
+export const alt = `${site.name} — ${site.headline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -124,7 +124,7 @@ export default async function OpengraphImage() {
               lineHeight: 1.4,
             }}
           >
-            {site.role} — {site.specialism}
+            {site.headline}
           </div>
         </div>
 

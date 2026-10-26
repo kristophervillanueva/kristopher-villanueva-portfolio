@@ -84,7 +84,6 @@ next:
   - "Add an offline or immutable copy so a compromised primary cannot propagate to every replica."
   - "Document the exact dataset-to-job mapping and the reconfiguration steps for a primary-storage failure."
   - "Test the physical host image recovery on spare hardware rather than assuming it boots."
-interview: "One of my infrastructure projects was a centralised backup and disaster recovery solution built around TrueNAS and Veeam. The environment runs virtual machines on Hyper-V, and the goal was to improve protection and recovery options for both the virtual machines and the physical host. Veeam manages the VM backups, while Windows Server Backup provides a system-image path for the host itself. TrueNAS provides the storage using ZFS with RAID-Z2 redundancy, and selected datasets replicate to a second TrueNAS system on separate hardware. I documented the procedures and tested both file-level and virtual-machine recovery, so those paths are verified in practice. I would not claim a measured RTO or RPO yet, because that needs timed tests and business-approved targets. What the project gave me was practical depth in backup operations, storage, replication and recovery planning — and a habit of separating what I have tested from what I have only designed."
 diagram: backup-flow
 ---
 
@@ -141,7 +140,3 @@ Screenshots are redacted before publication, which is why they are offered on re
 ## What I would do next
 
 <Next />
-
-## Interview version
-
-<Interview />

@@ -79,9 +79,6 @@ export const projectFrontmatterSchema = z.object({
   /** Next steps, honest. Rendered as a checklist. */
   next: z.array(z.string()).default([]),
 
-  /** The 60–90 second spoken version, for interview prep. */
-  interview: z.string().optional(),
-
   diagram: z.enum(["backup-flow", "remote-access"]).optional(),
   links: z.array(linkSchema).default([]),
   updated: z.string().optional(),

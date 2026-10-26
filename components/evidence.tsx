@@ -48,13 +48,17 @@ function EvidenceSlot({
       </div>
 
       <figcaption className="border-t border-line px-4 py-3.5">
-        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-          <p className="text-[13px] font-medium text-ink">{item.label}</p>
-          <EvidenceStatus status={item.status}>
-            {item.status === "verified" && item.date
-              ? `Verified ${item.date}`
-              : undefined}
-          </EvidenceStatus>
+        <div className="flex items-start justify-between gap-3">
+          <p className="min-w-0 text-[13px] font-medium text-ink">
+            {item.label}
+          </p>
+          <span className="shrink-0 whitespace-nowrap">
+            <EvidenceStatus status={item.status}>
+              {item.status === "verified" && item.date
+                ? `Verified ${item.date}`
+                : undefined}
+            </EvidenceStatus>
+          </span>
         </div>
         <p className="mt-1.5 text-[12px] leading-relaxed text-ink-3">
           {item.proves}

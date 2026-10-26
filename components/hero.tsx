@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 
 const profileRows = [
-  { label: "Current role", value: "IT Administrator" },
+  { label: "Current role", value: site.role },
   { label: "In role since", value: "Aug 2022" },
   { label: "Environment", value: "54 workstations · 4 VMs" },
   { label: "Virtualisation", value: "2 Dell Hyper-V hosts · 3 + 1" },
@@ -49,7 +49,7 @@ export function Hero() {
             </h1>
 
             <p className="mt-5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-accent">
-              {site.role} — {site.specialism}
+              {site.headline}
             </p>
 
             <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-ink-2 sm:text-[17px]">

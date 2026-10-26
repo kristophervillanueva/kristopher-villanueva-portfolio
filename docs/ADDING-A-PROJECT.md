@@ -66,11 +66,6 @@ Plain string arrays. `notClaiming` is a ledger of things the project does not
 prove. `next` is an honest checklist — items can stay open indefinitely; that
 is the point.
 
-### `interview`
-
-A single string, 60–90 seconds spoken. Write it the way you would say it, not
-the way you would write it.
-
 ### `diagram`
 
 `backup-flow` or `remote-access`. Renders a component from
@@ -93,7 +88,6 @@ Available in any `.mdx` file, no import needed:
 | `<Evidence />` | The evidence grid with legend. |
 | `<NotClaiming />` | The `notClaiming[]` ledger. |
 | `<Next />` | The `next[]` checklist. |
-| `<Interview />` | The spoken summary block. |
 | `<Callout title="...">` | A bordered callout. Use for test results. |
 
 Standard Markdown plus GFM tables, task lists and strikethrough work. Heading

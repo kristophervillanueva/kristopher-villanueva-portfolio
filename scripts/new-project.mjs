@@ -126,7 +126,6 @@ notClaiming:
   - "Anything this project does not prove. Be specific."
 next:
   - "The honest next step."
-interview: "Sixty to ninety seconds of spoken summary. Write it the way you would say it out loud."
 ---
 
 ## The problem
@@ -165,10 +164,6 @@ What was run, what was observed, and what that does and does not prove.
 ## What I would do next
 
 <Next />
-
-## Interview version
-
-<Interview />
 `;
 }
 
