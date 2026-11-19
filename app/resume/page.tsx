@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HomeLink } from "@/components/home-link";
 import { PrintButton } from "@/components/print-button";
 import { site } from "@/lib/site";
 import { siteUrl } from "@/lib/seo";
@@ -33,13 +34,13 @@ export default function ResumePage() {
     <>
       <div className="print-hidden border-b border-line">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8">
-          <Link
+          <HomeLink
             href="/"
             className="inline-flex items-center gap-2 font-mono text-2xs uppercase tracking-[0.12em] text-ink-3 transition-colors hover:text-ink"
           >
             <ArrowLeft className="size-3.5" />
             Back to portfolio
-          </Link>
+          </HomeLink>
           <div className="flex items-center gap-3">
             <p className="hidden font-mono text-2xs uppercase tracking-[0.1em] text-ink-3 sm:block">
               A4 · two pages

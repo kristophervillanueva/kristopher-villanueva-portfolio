@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/lib/site";
+import { HomeLink } from "@/components/home-link";
 import { ArrowUpRight, Close, Menu } from "@/components/icons";
 
 export function SiteHeader() {
@@ -29,7 +30,7 @@ export function SiteHeader() {
   return (
     <header className="print-hidden sticky top-0 z-50 border-b border-line bg-canvas/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between gap-6 px-5 sm:px-8">
-        <Link href="/" className="group flex items-center gap-3">
+        <HomeLink href="/" className="group flex items-center gap-3">
           <span className="flex size-8 items-center justify-center rounded-[5px] border border-line-2 bg-panel font-mono text-[10px] tracking-widest text-ink-2 transition-colors group-hover:border-accent/60 group-hover:text-ink">
             KV
           </span>
@@ -41,7 +42,7 @@ export function SiteHeader() {
               {site.role}
             </span>
           </span>
-        </Link>
+        </HomeLink>
 
         <nav
           aria-label="Primary"
@@ -49,19 +50,34 @@ export function SiteHeader() {
         >
           {nav.map((item) => {
             const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={`relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.13em] transition-colors ${
-                  active ? "text-ink" : "text-ink-3 hover:text-ink-2"
-                }`}
-              >
+            const className = `relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.13em] transition-colors ${
+              active ? "text-ink" : "text-ink-3 hover:text-ink-2"
+            }`;
+            const content = (
+              <>
                 {item.label}
                 {active && (
                   <span className="absolute inset-x-3 -bottom-[21px] h-px bg-accent" />
                 )}
+              </>
+            );
+            return item.href === "/" ? (
+              <HomeLink
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={className}
+              >
+                {content}
+              </HomeLink>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={className}
+              >
+                {content}
               </Link>
             );
           })}
@@ -95,17 +111,20 @@ export function SiteHeader() {
           className="border-t border-line bg-canvas px-5 pb-5 pt-2 md:hidden"
         >
           <nav aria-label="Mobile" className="flex flex-col">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`border-b border-line/60 py-3.5 font-mono text-xs uppercase tracking-[0.13em] ${
-                  isActive(item.href) ? "text-ink" : "text-ink-2"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {nav.map((item) => {
+              const className = `border-b border-line/60 py-3.5 font-mono text-xs uppercase tracking-[0.13em] ${
+                isActive(item.href) ? "text-ink" : "text-ink-2"
+              }`;
+              return item.href === "/" ? (
+                <HomeLink key={item.href} href={item.href} className={className}>
+                  {item.label}
+                </HomeLink>
+              ) : (
+                <Link key={item.href} href={item.href} className={className}>
+                  {item.label}
+                </Link>
+              );
+            })}
             <a
               href={`mailto:${site.email}`}
               className="py-3.5 font-mono text-xs uppercase tracking-[0.13em] text-accent"

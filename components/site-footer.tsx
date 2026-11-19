@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { nav, site } from "@/lib/site";
+import { HomeLink } from "@/components/home-link";
 import { LinkedIn, Mail } from "@/components/icons";
 
 export function SiteFooter() {
@@ -59,9 +60,15 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2.5 text-sm">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="link-underline text-ink-2">
-                    {item.label}
-                  </Link>
+                  {item.href === "/" ? (
+                    <HomeLink href={item.href} className="link-underline text-ink-2">
+                      {item.label}
+                    </HomeLink>
+                  ) : (
+                    <Link href={item.href} className="link-underline text-ink-2">
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
               <li>

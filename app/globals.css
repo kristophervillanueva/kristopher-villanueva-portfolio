@@ -39,24 +39,90 @@
   --radius-panel: 0.625rem;
 }
 
+:root {
+  color-scheme: dark;
+  --target-size: 24px;
+  --scrollbar-thumb: var(--color-ink-3);
+  --scrollbar-track: var(--color-canvas);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-size: 44px;
+  }
+}
+
+/* Legacy fallback only where the standard scrollbar properties are missing. */
+@supports not (scrollbar-color: auto) {
+  :root {
+    scrollbar-width: auto;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border: 2px solid var(--scrollbar-track);
+    border-radius: 99px;
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-line);
   }
 
   html {
-    scroll-behavior: smooth;
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
   }
 
   body {
-    background-color: var(--color-base);
+    background-color: var(--color-canvas);
     color: var(--color-ink-2);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    text-align: start;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+  }
+
+  :where(a, code) {
+    overflow-wrap: anywhere;
+  }
+
+  :where(
+      button,
+      select,
+      textarea,
+      input:not([type="checkbox"], [type="radio"]),
+      [role="button"],
+      nav a,
+      label:has(input[type="checkbox"], input[type="radio"])
+    ) {
+    min-block-size: var(--target-size);
+    min-inline-size: var(--target-size);
+  }
+
+  :where(
+      [role="button"],
+      nav a,
+      label:has(input[type="checkbox"], input[type="radio"])
+    ) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  :where(nav, nav ul) {
+    flex-wrap: wrap;
   }
 
   ::selection {
@@ -87,23 +153,36 @@
   hr {
     border-color: var(--color-line);
   }
-
-  /* thin, unobtrusive scrollbar */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--color-base);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-line-2);
-    border-radius: 99px;
-    border: 2px solid var(--color-base);
-  }
 }
 
 @layer components {
+  .fluid-display {
+    font-size: clamp(2.6rem, 1.6rem + 5vw, 4.3rem);
+  }
+
+  .fluid-heading {
+    font-size: clamp(1.7rem, 1.4rem + 1.2vw, 2rem);
+  }
+
+  .fluid-subheading {
+    font-size: clamp(1.85rem, 1.5rem + 2vw, 3rem);
+  }
+
+  /* Cards adapt to the width they are given, not to the viewport. */
+  .case-card {
+    container: case-card / inline-size;
+  }
+
+  .case-card h3 {
+    font-size: clamp(1.05rem, 4.5cqi, 1.4rem);
+  }
+
+  @container case-card (inline-size >= 30rem) {
+    .case-card .case-summary {
+      font-size: 0.95rem;
+    }
+  }
+
   .eyebrow {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
@@ -349,30 +428,81 @@
 
 .animate-flow {
   stroke-dasharray: 5 9;
-  animation: dash-flow 2.4s linear infinite;
 }
 
-.animate-dot {
-  animation: soft-pulse 2.4s ease-in-out infinite;
-}
+/* Motion is opt-in: the static state is the default for reduced-motion users. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 
-.animate-rise {
-  animation: fade-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  @view-transition {
+    navigation: auto;
+  }
+
+  @keyframes page-out {
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  ::view-transition-old(root) {
+    animation: 180ms ease-in both page-out;
+  }
+
+  ::view-transition-new(root) {
+    animation: 260ms ease-out both page-in;
+  }
+
+  .animate-flow {
+    animation: dash-flow 2.4s linear infinite;
+  }
+
+  .animate-dot {
+    animation: soft-pulse 2.4s ease-in-out infinite;
+  }
+
+  .animate-rise {
+    animation: fade-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+}
+
+/* --- forced colors ----------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .panel,
+  .chip,
+  .btn,
+  .btn-ghost,
+  .hairline {
+    border-color: CanvasText;
   }
-  .animate-flow {
-    stroke-dasharray: none;
+
+  .hairline {
+    background: CanvasText;
+  }
+
+  :focus-visible {
+    outline-color: Highlight;
+  }
+
+  .grid-bg,
+  .glow-top {
+    background-image: none;
   }
 }
 

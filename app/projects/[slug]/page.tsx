@@ -94,7 +94,7 @@ export default async function ProjectPage({ params }: Params) {
             <ProjectStatus status={project.status} />
           </div>
 
-          <h1 className="mt-5 max-w-3xl text-[clamp(1.85rem,4.4vw,3rem)] leading-[1.05] tracking-[-0.02em]">
+          <h1 className="fluid-subheading mt-5 max-w-3xl leading-[1.05] tracking-[-0.02em]">
             {project.title}
           </h1>
           <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-ink-2">

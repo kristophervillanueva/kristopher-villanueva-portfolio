@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HomeLink } from "@/components/home-link";
 import { ArrowLeft } from "@/components/icons";
 
 export default function NotFound() {
@@ -21,10 +22,10 @@ export default function NotFound() {
           <Link href="/projects" className="btn btn-primary">
             All projects
           </Link>
-          <Link href="/" className="btn btn-ghost">
+          <HomeLink href="/" className="btn btn-ghost">
             <ArrowLeft className="size-3.5" />
             Home
-          </Link>
+          </HomeLink>
         </div>
       </div>
     </div>

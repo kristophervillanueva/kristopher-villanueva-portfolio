@@ -13,7 +13,7 @@ export function CaseStudyCard({
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group panel relative flex flex-col p-6 transition-colors duration-200 hover:border-line-2 hover:bg-panel-2/50 sm:p-7"
+      className="case-card group panel relative flex flex-col p-6 transition-colors duration-200 hover:border-line-2 hover:bg-panel-2/50 sm:p-7"
     >
       <div className="flex items-start justify-between gap-4">
         <span className="font-mono text-2xs tracking-[0.14em] text-ink-3">
@@ -22,14 +22,14 @@ export function CaseStudyCard({
         <span className="chip">{categoryLabel(project.category)}</span>
       </div>
 
-      <h3 className="mt-7 text-[1.15rem] leading-snug font-semibold text-ink transition-colors group-hover:text-white sm:text-[1.3rem]">
+      <h3 className="mt-7 leading-snug font-semibold text-ink transition-colors group-hover:text-white">
         {project.title}
       </h3>
       <p className="mt-2 text-[13px] leading-relaxed text-ink-3">
         {project.subtitle}
       </p>
 
-      <p className="mt-5 text-sm leading-relaxed text-ink-2">
+      <p className="case-summary mt-5 text-sm leading-relaxed text-ink-2">
         {project.summary}
       </p>
 

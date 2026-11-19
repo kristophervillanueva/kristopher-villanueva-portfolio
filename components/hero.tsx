@@ -1,22 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 
-const profileRows = [
-  { label: "Current role", value: site.role },
-  { label: "In role since", value: "Aug 2022" },
-  { label: "Environment", value: "54 workstations · 4 VMs" },
-  { label: "Virtualisation", value: "2 Dell Hyper-V hosts · 3 + 1" },
-  { label: "Core stack", value: "Windows Server · Hyper-V · FortiGate · TrueNAS" },
-  { label: "Based", value: "Metro Manila, PH" },
-];
-
 export function Hero() {
-  const updated = new Date().toLocaleDateString("en-GB", {
-    month: "short",
-    year: "numeric",
-  });
-
   return (
     <section className="relative overflow-hidden">
       <div
@@ -44,7 +31,7 @@ export function Hero() {
               </span>
             </div>
 
-            <h1 className="mt-7 text-[clamp(2.6rem,7vw,4.3rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-ink">
+            <h1 className="fluid-display mt-7 font-semibold leading-[0.95] tracking-[-0.035em] text-ink">
               {site.name}
             </h1>
 
@@ -68,36 +55,20 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="panel overflow-hidden lg:mt-1">
-            <div className="flex items-center justify-between border-b border-line px-5 py-3">
-              <span className="font-mono text-2xs uppercase tracking-[0.16em] text-ink-3">
-                profile
-              </span>
-              <span className="inline-flex items-center gap-1.5 font-mono text-2xs uppercase tracking-[0.12em] text-ok">
-                <span className="size-1.5 rounded-full bg-ok" aria-hidden />
-                active
-              </span>
-            </div>
-            <dl className="divide-y divide-line">
-              {profileRows.map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-baseline justify-between gap-6 px-5 py-3.5"
-                >
-                  <dt className="shrink-0 font-mono text-2xs uppercase tracking-[0.12em] text-ink-3">
-                    {row.label}
-                  </dt>
-                  <dd className="text-right text-[12.5px] leading-snug text-ink">
-                    {row.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <div className="border-t border-line px-5 py-3">
-              <span className="font-mono text-2xs text-ink-3">
-                updated {updated}
-              </span>
-            </div>
+          <div className="relative mx-auto h-[20rem] w-full max-w-[19rem] select-none sm:h-[24rem] lg:mt-1 lg:h-[30rem] lg:max-w-[22rem]">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-[8%] bottom-[6%] top-[18%] rounded-full bg-[radial-gradient(ellipse_at_50%_65%,rgba(241,163,60,0.12),transparent_70%)]"
+            />
+            <Image
+              src="/kristopher-cutout.png"
+              alt={`${site.name}, ${site.role}`}
+              fill
+              priority
+              sizes="(min-width: 1024px) 22rem, 19rem"
+              className="pointer-events-none object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_88%,transparent_100%)]"
+              draggable={false}
+            />
           </div>
         </div>
       </div>
